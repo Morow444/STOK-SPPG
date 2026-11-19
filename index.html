@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistem Inventaris & QR Code APD/Kebersihan - SPPG Blimbingsari</title>
+  <style>
+    :root {
+      --navy: #0f172a;
+      --blue-dark: #1e3a8a;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --blue-border: #bfdbfe;
+      --slate: #64748b;
+      --border: #e2e8f0;
+      --bg: #f1f5f9;
+      --white: #ffffff;
+      --green-bg: #dcfce7;
+      --green-txt: #166534;
+      --red-bg: #fee2e2;
+      --red-txt: #991b1b;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      padding-bottom: 155px;
+    }
+
+    /* TOP HEADER */
+    .topbar {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue-dark) 60%, var(--blue) 100%);
+      color: #fff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
+    }
+    .topbar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -0.2px; }
+    .brand p { margin: 2px 0 0; font-size: 11px; color: #bfdbfe; }
+    .admin-btn {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .admin-btn.unlocked {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: #052e16;
+    }
+
+    /* 3-TAB NAVIGATION (ADMIN ONLY) */
+    .nav-tabs {
+      display: none;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      position: sticky;
+      top: 62px;
+      z-index: 40;
+    }
+    .nav-tabs.visible { display: block; }
+    .nav-tabs-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .tab-btn {
+      padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+    }
+
+    /* CONTAINER & CARDS */
+    .container { max-width: 960px; margin: 14px auto; padding: 0 12px; }
+    .form-wrap { max-width: 540px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .step-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--blue-dark);
+      margin: 0 0 12px;
+    }
+    .step-badge {
+      background: var(--blue);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    /* SETUP BANNER (IF API URL NOT SET) */
+    .setup-banner {
+      background: #fef3c7;
+      border: 1.5px solid #f59e0b;
+      color: #92400e;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+    }
+    .setup-banner input {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #d97706;
+      border-radius: 8px;
+      margin: 8px 0;
+      font-size: 12.5px;
+    }
+
+    /* OPTION BUTTONS */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .opt-card {
+      border: 2px solid var(--border);
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #334155;
+      transition: all 0.15s;
+    }
+    .opt-card small { display: block; font-size: 11px; font-weight: 500; color: var(--slate); margin-top: 2px; }
+    .opt-card.active {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      color: var(--blue-dark);
+    }
+
+    /* SEARCH & FILTER */
+    .search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13.5px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .filter-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; }
+    .chip {
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip.active { background: var(--blue-dark); color: #fff; border-color: var(--blue-dark); }
+
+    /* ITEM LIST */
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: #fff;
+      transition: all 0.12s;
+    }
+    .item-row.checked {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      cursor: pointer;
+    }
+    .item-left input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .item-name { font-size: 13.5px; font-weight: 700; color: var(--navy); }
+    .item-meta { font-size: 11px; color: var(--slate); }
+    .qty-box { display: flex; align-items: center; gap: 4px; }
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--blue-dark);
+      cursor: pointer;
+    }
+    .qty-val {
+      width: 34px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+      border: none;
+      background: transparent;
+      color: var(--navy);
+    }
+
+    /* STICKY SUBMIT BAR */
+    .sticky-bar {
+      position: fixed;
+      bottom: 52px;
+      left: 10px;
+      right: 10px;
+      background: #fff;
+      border: 1.5px solid var(--blue-border);
+      border-radius: 16px;
+      padding: 11px 14px;
+      z-index: 9999;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.14);
+    }
+    .sticky-inner {
+      max-width: 540px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .summary-txt { font-size: 12px; color: var(--slate); }
+    .summary-txt strong { display: block; font-size: 14px; color: var(--navy); }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+    .btn-danger {
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-danger:disabled { background: #fca5a5; cursor: not-allowed; }
+
+    /* DASHBOARD & TABLES */
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .kpi-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .kpi-label { font-size: 11.5px; color: var(--slate); font-weight: 600; }
+    .kpi-val { font-size: 22px; font-weight: 800; margin-top: 4px; color: var(--blue-dark); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    td { padding: 10px; border-bottom: 1px solid var(--border); }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-block;
+    }
+    .badge-aman { background: var(--green-bg); color: var(--green-txt); }
+    .badge-restock { background: var(--red-bg); color: var(--red-txt); }
+
+    /* POSTER A4 */
+    .poster-sheet {
+      background: #fff;
+      border: 3px solid var(--blue-dark);
+      border-radius: 18px;
+      padding: 24px;
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .poster-header {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+    .poster-header h2 { margin: 0; font-size: 20px; }
+    .poster-header p { margin: 4px 0 0; font-size: 13px; color: #dbeafe; }
+    .qr-frame {
+      display: inline-block;
+      padding: 14px;
+      background: #fff;
+      border: 2px solid var(--blue-border);
+      border-radius: 16px;
+      margin: 8px 0 14px;
+    }
+    .poster-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+      text-align: left;
+    }
+    .p-step {
+      background: var(--blue-light);
+      border: 1px solid var(--blue-border);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 12px;
+    }
+    .p-step strong { display: block; color: var(--blue-dark); margin-bottom: 3px; }
+    .poster-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .p-tag {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    /* MODAL PIN */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .pin-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 6px;
+      font-weight: 800;
+      border: 2px solid var(--blue-border);
+      border-radius: 10px;
+      margin: 12px 0;
+    }
+
+    .hidden { display: none !important; }
+    .toast {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+    }
+
+    @media print {
+      .topbar, .nav-tabs, .no-print, .sticky-bar { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .poster-sheet { border: 2px solid #000; box-shadow: none; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1>SPPG Blimbingsari</h1>
+        <p>Kontrol Stok & Inventaris APD / Kebersihan</p>
+      </div>
+      <button id="btnAdminToggle" class="admin-btn" onclick="handleAdminButton()">🔐 Mode Admin</button>
+    </div>
+  </div>
+
+  <!-- 3-TAB BAR (HANYA MUNCUL SETELAH LOGIN PIN ADMIN) -->
+  <div id="adminNav" class="nav-tabs">
+    <div class="nav-tabs-inner">
+      <button class="tab-btn active" id="tabBtn1" onclick="switchTab(1)">1. Form Input</button>
+      <button class="tab-btn" id="tabBtn2" onclick="switchTab(2)">2. Dashboard & Log</button>
+      <button class="tab-btn" id="tabBtn3" onclick="switchTab(3)">3. Poster 1-QR</button>
+    </div>
+  </div>
+
+  <!-- TAB 1: FORM INPUT -->
+  <div id="tab1" class="container">
+    <div class="form-wrap">
+
+      <!-- SETUP API URL (MUNCUL JIKA BELUM DIISI DI KODE ATAU LOCALSTORAGE) -->
+      <div id="apiSetupBanner" class="setup-banner hidden">
+        <strong>⚙️ Konfigurasi Koneksi Google Sheets (1 Kali Saja)</strong>
+        <div style="margin-top:4px;">Tempelkan URL Web App Google Apps Script Anda (<code>https://script.google.com/macros/s/.../exec</code>) agar data terhubung otomatis ke Google Sheets:</div>
+        <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/...../exec">
+        <button class="btn-primary" style="padding:8px 14px;font-size:12px;" onclick="saveApiUrl()">Simpan Koneksi API</button>
+      </div>
+
+      <!-- JENIS TRANSAKSI -->
+      <div class="card">
+        <div class="step-title"><span class="step-badge">1</span> Jenis Transaksi</div>
+        <div id="jenisGrid" class="grid2" style="grid-template-columns: 1fr;">
+          <div class="opt-card active" id="optAmbil" onclick="setJenis('Ambil / Pakai Barang')">
+            📤 Ambil / Pakai Barang
+            <small>Pengambilan rutin operasional harian</small>
+          </div>
+          <div class="opt-card hidden" id="optMasuk" onclick="setJenis('Stok Masuk')">
+            📥 Stok Masuk (Admin)
+            <small>Penambahan stok gudang baru</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- PILIH DIVISI -->
+      <div class="card" id="cardDivisi">
+        <div class="step-title"><span class="step-badge">2</span> Pilih Divisi</div>
+        <div class="grid2" id="divisiGrid">
+          <div class="opt-card" onclick="setDivisi(this, 'Driver')">🚚 Driver</div>
+          <div class="opt-card" onclick="setDivisi(this, 'Ompreng')">🍱 Ompreng</div>
+          <div class="opt-card" onclick="setDivisi(this, 'Persiapan')">🔪 Persiapan</div>
+          <div class="opt-card" onclick="setDivisi(this, 'Pengolahan')">🍳 Pengolahan</div>
+          <div class="opt-card" onclick="setDivisi(this, 'Pemorsian')">⚖️ Pemorsian</div>
+          <div class="opt-card" onclick="setDivisi(this, 'Kebersihan')">🧹 Kebersihan</div>
+        </div>
+      </div>
+
+      <!-- PILIH BARANG -->
+      <div class="card">
+        <div class="step-title"><span class="step-badge" id="stepBarangNum">3</span> Centang Barang & Atur Jumlah</div>
+        <input type="text" class="search-input" id="searchBox" placeholder="🔍 Cari nama barang..." oninput="renderItems()">
+        <div class="filter-row">
+          <button class="chip active" onclick="setFilter(this, 'ALL')">Semua (11)</button>
+          <button class="chip" onclick="setFilter(this, 'APD')">APD (4)</button>
+          <button class="chip" onclick="setFilter(this, 'Kebersihan')">Kebersihan (7)</button>
+        </div>
+        <div id="itemsContainer"></div>
+        <div id="formToast" class="toast"></div>
+      </div>
+    </div>
+
+    <div class="sticky-bar">
+      <div class="sticky-inner">
+        <div class="summary-txt">
+          <span id="sumDivisi">Divisi: Belum dipilih</span>
+          <strong id="sumCount">0 barang dipilih</strong>
+        </div>
+        <button class="btn-primary" id="btnSimpan" onclick="submitTransaksi()">Simpan Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: DASHBOARD & LOG (ADMIN ONLY) -->
+  <div id="tab2" class="container hidden">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Jenis Item</div>
+        <div class="kpi-val" id="kpiTotal">11</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Status Aman</div>
+        <div class="kpi-val" style="color:#16a34a" id="kpiAman">-</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Perlu Restock</div>
+        <div class="kpi-val" style="color:#dc2626" id="kpiRestock">-</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <h3 style="margin:0;font-size:15px;color:var(--blue-dark);">📊 Monitoring Stok Real-Time</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;" onclick="loadDashboardData()">🔄 Refresh</button>
+          <button class="btn-danger" id="btnResetLog" onclick="openResetModal()">🗑️ Reset Data Log</button>
+        </div>
+      </div>
+      <div id="dashToast" class="toast" style="margin-bottom:12px;"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Nama Barang</th>
+              <th>Satuan</th>
+              <th>Awal</th>
+              <th>Masuk</th>
+              <th>Keluar</th>
+              <th>Sisa Stok</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="dashTableBody">
+            <tr><td colspan="8" style="text-align:center;color:#64748b;">Memuat data dari Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 12px;font-size:15px;color:var(--blue-dark);">🕒 15 Riwayat Transaksi Terakhir</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Divisi</th>
+              <th>Transaksi</th>
+              <th>Nama Barang</th>
+              <th>Jumlah</th>
+            </tr>
+          </thead>
+          <tbody id="logTableBody">
+            <tr><td colspan="5" style="text-align:center;color:#64748b;">Memuat riwayat transaksi...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PENGATURAN API URL ADMIN -->
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:14px;color:var(--blue-dark);">⚙️ Pengaturan Koneksi API Google Apps Script</h3>
+      <p style="margin:0 0 8px;font-size:12px;color:#64748b;">URL Web App Apps Script yang terhubung ke Google Sheets:</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input type="url" id="adminApiUrlField" class="search-input" style="margin:0;flex:1;min-width:220px;" placeholder="https://script.google.com/macros/s/.../exec">
+        <button class="btn-primary" style="padding:10px 14px;font-size:12.5px;" onclick="updateApiUrlFromAdmin()">Update URL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: POSTER 1-QR (ADMIN ONLY) -->
+  <div id="tab3" class="container hidden">
+    <div class="no-print" style="max-width:680px;margin:0 auto 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:12.5px;color:#475569;font-weight:600;">QR otomatis mengarah ke alamat domain hosting web ini</span>
+      <button class="btn-primary" onclick="window.print()">🖨️ Cetak Poster (A4)</button>
+    </div>
+
+    <div class="poster-sheet">
+      <div class="poster-header">
+        <h2>SCAN QR KONTROL STOK & APD</h2>
+        <p>SPPG BLIMBINGSARI • LOG PENGAMBILAN BARANG HARIAN</p>
+      </div>
+
+      <div class="qr-frame">
+        <img id="posterQrImg" src="" alt="QR Code Inventaris SPPG" width="230" height="230" style="display:block;">
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--blue-dark);">Arahkan Kamera HP / Google Lens ke QR Code di Atas</div>
+      <div id="posterUrlLabel" style="font-size:11px;color:#64748b;margin-top:4px;word-break:break-all;"></div>
+
+      <div class="poster-steps">
+        <div class="p-step"><strong>1. Scan QR Code</strong>Buka link form inventaris langsung di browser HP Anda.</div>
+        <div class="p-step"><strong>2. Pilih Divisi</strong>Pilih divisi kerja Anda (Driver, Ompreng, Dapur, Kebersihan).</div>
+        <div class="p-step"><strong>3. Centang & Simpan</strong>Pilih barang yang diambil, atur jumlah, lalu klik Simpan.</div>
+      </div>
+
+      <div style="font-size:12px;font-weight:800;color:#334155;margin-top:10px;">DAFTAR ITEM TERDAFTAR:</div>
+      <div class="poster-items">
+        <span class="p-tag">Sarung Tangan Karet</span>
+        <span class="p-tag">Sarung Tangan Plastik</span>
+        <span class="p-tag">Masker</span>
+        <span class="p-tag">Handcap</span>
+        <span class="p-tag">Tisu</span>
+        <span class="p-tag">Kantong Sampah Kecil</span>
+        <span class="p-tag">Kantong Sampah Sedang</span>
+        <span class="p-tag">Wipol</span>
+        <span class="p-tag">Soklin Lantai</span>
+        <span class="p-tag">Cling</span>
+        <span class="p-tag">Porstex</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LOGIN PIN ADMIN -->
+  <div id="pinModal" class="modal-bg">
+    <div class="modal-box">
+      <h3 style="margin:0 0 6px;color:var(--blue-dark);">🔐 Akses Khusus Admin</h3>
+      <p style="margin:0;font-size:12.5px;color:#64748b;">Masukkan PIN Admin untuk membuka Stok Masuk, Dashboard Stok, & Poster QR.</p>
+      <input type="password" inputmode="numeric" id="pinField" class="pin-input" placeholder="••••" maxlength="8">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="opt-card" style="padding:10px;" onclick="closePinModal()">Batal</button>
+        <button class="btn-primary" id="btnVerifyPin" style="padding:10px;" onclick="verifyPin()">Buka Akses</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KONFIRMASI RESET DATA -->
+  <div id="resetModal" class="modal-bg">
+    <div class="modal-box">
+      <h3 style="margin:0 0 6px;color:#dc2626;">⚠️ Reset Seluruh Log Transaksi?</h3>
+      <p style="margin:0;font-size:12.5px;color:#475569;line-height:1.45;">
+        Semua riwayat <b>Ambil/Pakai</b> & <b>Stok Masuk</b> di Google Sheets akan dihapus permanen, dan sisa stok akan kembali ke angka <b>Stok Awal</b>.
+      </p>
+      <input type="password" inputmode="numeric" id="resetPinField" class="pin-input" placeholder="PIN ADMIN" maxlength="8">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="opt-card" style="padding:10px;" onclick="closeResetModal()">Batal</button>
+        <button class="btn-danger" id="btnConfirmReset" style="padding:10px;font-size:13.5px;" onclick="confirmResetData()">Ya, Hapus Semua</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI SEBELUM UPLOAD KE NETLIFY:
+    const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZBKe7GEL9zfMBpoGwf-_zvb-8N9g6rFB-C2LI6-n20yU5TFxVf7LxfWXvLwihvoNG/exec";
+    // =========================================================================
+
+    const ITEMS_MASTER = [
+      { kode: "APD-01", nama: "Sarung Tangan Karet", kat: "APD", satuan: "Pasang" },
+      { kode: "APD-02", nama: "Sarung Tangan Plastik", kat: "APD", satuan: "Pack" },
+      { kode: "APD-03", nama: "Masker", kat: "APD", satuan: "Box" },
+      { kode: "APD-04", nama: "Handcap", kat: "APD", satuan: "Box" },
+      { kode: "KBR-01", nama: "Tisu", kat: "Kebersihan", satuan: "Pack" },
+      { kode: "KBR-02", nama: "Kantong Sampah Kecil", kat: "Kebersihan", satuan: "Pack" },
+      { kode: "KBR-03", nama: "Kantong Sampah Sedang", kat: "Kebersihan", satuan: "Pack" },
+      { kode: "KBR-04", nama: "Wipol", kat: "Kebersihan", satuan: "Pouch/Botol" },
+      { kode: "KBR-05", nama: "Soklin Lantai", kat: "Kebersihan", satuan: "Pouch/Botol" },
+      { kode: "KBR-06", nama: "Cling", kat: "Kebersihan", satuan: "Botol/Pouch" },
+      { kode: "KBR-07", nama: "Porstex", kat: "Kebersihan", satuan: "Botol" }
+    ];
+
+    let isAdmin = false;
+    let adminPinCache = "";
+    let currentJenis = "Ambil / Pakai Barang";
+    let currentDivisi = "";
+    let currentFilter = "ALL";
+    let itemState = ITEMS_MASTER.map(it => ({ ...it, checked: false, qty: 1 }));
+
+    function getApiUrl() {
+      const saved = localStorage.getItem("sppg_api_url") || "";
+      return (DEFAULT_APPS_SCRIPT_URL || saved).trim();
+    }
+
+    function initApiConfig() {
+      const url = getApiUrl();
+      if (!url) {
+        document.getElementById("apiSetupBanner").classList.remove("hidden");
+      } else {
+        document.getElementById("apiSetupBanner").classList.add("hidden");
+      }
+      document.getElementById("adminApiUrlField").value = url;
+    }
+
+    function saveApiUrl() {
+      const val = document.getElementById("apiUrlInput").value.trim();
+      if (!val.startsWith("https://script.google.com/")) {
+        alert("Pastikan URL diawali dengan https://script.google.com/...");
+        return;
+      }
+      localStorage.setItem("sppg_api_url", val);
+      initApiConfig();
+      alert("Koneksi API berhasil disimpan!");
+    }
+
+    function updateApiUrlFromAdmin() {
+      const val = document.getElementById("adminApiUrlField").value.trim();
+      if (!val.startsWith("https://script.google.com/")) {
+        alert("Pastikan URL diawali dengan https://script.google.com/...");
+        return;
+      }
+      localStorage.setItem("sppg_api_url", val);
+      initApiConfig();
+      alert("URL API berhasil diperbarui!");
+      loadDashboardData();
+    }
+
+    // RENDER ITEMS
+    function renderItems() {
+      const q = document.getElementById("searchBox").value.toLowerCase();
+      const box = document.getElementById("itemsContainer");
+      box.innerHTML = itemState.map((it, idx) => {
+        if (currentFilter !== "ALL" && it.kat !== currentFilter) return "";
+        if (q && !it.nama.toLowerCase().includes(q)) return "";
+        return `
+          <div class="item-row ${it.checked ? 'checked' : ''}">
+            <label class="item-left">
+              <input type="checkbox" ${it.checked ? 'checked' : ''} onchange="toggleCheck(${idx}, this.checked)">
+              <div>
+                <div class="item-name">${it.nama}</div>
+                <div class="item-meta">${it.kode} • Satuan: ${it.satuan}</div>
+              </div>
+            </label>
+            <div class="qty-box">
+              <button type="button" class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+              <input type="text" class="qty-val" value="${it.qty}" readonly>
+              <button type="button" class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+      updateSummary();
+    }
+
+    function toggleCheck(idx, val) {
+      itemState[idx].checked = val;
+      renderItems();
+    }
+
+    function changeQty(idx, delta) {
+      itemState[idx].qty = Math.max(1, itemState[idx].qty + delta);
+      itemState[idx].checked = true;
+      renderItems();
+    }
+
+    function setFilter(el, cat) {
+      currentFilter = cat;
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      el.classList.add("active");
+      renderItems();
+    }
+
+    function setJenis(val) {
+      if (val === "Stok Masuk" && !isAdmin) return;
+      currentJenis = val;
+      document.getElementById("optAmbil").classList.toggle("active", val === "Ambil / Pakai Barang");
+      document.getElementById("optMasuk").classList.toggle("active", val === "Stok Masuk");
+      if (val === "Stok Masuk") {
+        currentDivisi = "Admin / Gudang";
+        document.getElementById("cardDivisi").classList.add("hidden");
+        document.getElementById("stepBarangNum").innerText = "2";
+      } else {
+        if (currentDivisi === "Admin / Gudang") currentDivisi = "";
+        document.getElementById("cardDivisi").classList.remove("hidden");
+        document.getElementById("stepBarangNum").innerText = "3";
+      }
+      updateSummary();
+    }
+
+    function setDivisi(el, divName) {
+      currentDivisi = divName;
+      document.querySelectorAll("#divisiGrid .opt-card").forEach(c => c.classList.remove("active"));
+      el.classList.add("active");
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const selected = itemState.filter(x => x.checked);
+      document.getElementById("sumDivisi").innerText = "Divisi: " + (currentDivisi || "Belum dipilih");
+      document.getElementById("sumCount").innerText = selected.length + " barang dipilih";
+    }
+
+    // ADMIN PIN LOGIC
+    function handleAdminButton() {
+      if (isAdmin) {
+        isAdmin = false;
+        adminPinCache = "";
+        document.getElementById("btnAdminToggle").innerText = "🔐 Mode Admin";
+        document.getElementById("btnAdminToggle").classList.remove("unlocked");
+        document.getElementById("adminNav").classList.remove("visible");
+        document.getElementById("optMasuk").classList.add("hidden");
+        document.getElementById("jenisGrid").style.gridTemplateColumns = "1fr";
+        setJenis("Ambil / Pakai Barang");
+        switchTab(1);
+      } else {
+        document.getElementById("pinField").value = "";
+        document.getElementById("pinModal").classList.add("open");
+        setTimeout(() => document.getElementById("pinField").focus(), 100);
+      }
+    }
+
+    function closePinModal() {
+      document.getElementById("pinModal").classList.remove("open");
+    }
+
+    async function verifyPin() {
+      const apiUrl = getApiUrl();
+      if (!apiUrl) {
+        alert("Harap isi URL Google Apps Script terlebih dahulu!");
+        closePinModal();
+        return;
+      }
+      const val = document.getElementById("pinField").value.trim();
+      const btn = document.getElementById("btnVerifyPin");
+      btn.disabled = true;
+      btn.innerText = "Memeriksa...";
+      try {
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "cekPin", pin: val })
+        });
+        const json = await res.json();
+        btn.disabled = false;
+        btn.innerText = "Buka Akses";
+        if (json.status === "ok" && json.valid) {
+          isAdmin = true;
+          adminPinCache = val;
+          closePinModal();
+          document.getElementById("btnAdminToggle").innerText = "🔓 Admin Aktif (Kunci)";
+          document.getElementById("btnAdminToggle").classList.add("unlocked");
+          document.getElementById("adminNav").classList.add("visible");
+          document.getElementById("optMasuk").classList.remove("hidden");
+          document.getElementById("jenisGrid").style.gridTemplateColumns = "1fr 1fr";
+          loadDashboardData();
+        } else {
+          alert("PIN Admin salah!");
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = "Buka Akses";
+        alert("Gagal terhubung ke API Apps Script: " + err.message);
+      }
+    }
+
+    // RESET DATA LOGIC
+    function openResetModal() {
+      if (!isAdmin) return;
+      document.getElementById("resetPinField").value = "";
+      document.getElementById("resetModal").classList.add("open");
+      setTimeout(() => document.getElementById("resetPinField").focus(), 100);
+    }
+
+    function closeResetModal() {
+      document.getElementById("resetModal").classList.remove("open");
+    }
+
+    async function confirmResetData() {
+      const apiUrl = getApiUrl();
+      const pinInput = document.getElementById("resetPinField").value.trim();
+      if (!pinInput) {
+        alert("Masukkan PIN Admin untuk konfirmasi reset.");
+        return;
+      }
+      const btn = document.getElementById("btnConfirmReset");
+      const dToast = document.getElementById("dashToast");
+      btn.disabled = true;
+      btn.innerText = "Mereset...";
+      dToast.style.display = "none";
+
+      try {
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "reset", pin: pinInput })
+        });
+        const json = await res.json();
+        btn.disabled = false;
+        btn.innerText = "Ya, Hapus Semua";
+        if (json.status === "ok") {
+          closeResetModal();
+          dToast.style.display = "block";
+          dToast.style.background = "#dcfce7";
+          dToast.style.color = "#166534";
+          dToast.innerText = "✅ Semua data log berhasil di-reset! Sisa stok kembali ke Stok Awal.";
+          loadDashboardData();
+        } else {
+          alert("Gagal reset data: " + json.message);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = "Ya, Hapus Semua";
+        alert("Error koneksi: " + err.message);
+      }
+    }
+
+    function switchTab(num) {
+      if (num > 1 && !isAdmin) return;
+      [1, 2, 3].forEach(n => {
+        document.getElementById("tab" + n).classList.toggle("hidden", n !== num);
+        document.getElementById("tabBtn" + n).classList.toggle("active", n === num);
+      });
+      if (num === 2) loadDashboardData();
+      if (num === 3) {
+        const hostUrl = window.location.href.split("?")[0].split("#")[0];
+        document.getElementById("posterQrImg").src =
+          "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" + encodeURIComponent(hostUrl);
+        document.getElementById("posterUrlLabel").innerText = hostUrl;
+      }
+    }
+
+    // SUBMIT DATA
+    async function submitTransaksi() {
+      const apiUrl = getApiUrl();
+      if (!apiUrl) {
+        alert("URL API Google Apps Script belum diatur! Silakan tempelkan URL Web App Apps Script Anda terlebih dahulu.");
+        return;
+      }
+      const dipilih = itemState.filter(x => x.checked);
+      if (!currentDivisi) { alert("Silakan pilih Divisi terlebih dahulu!"); return; }
+      if (dipilih.length === 0) { alert("Silakan centang minimal 1 barang!"); return; }
+
+      const btn = document.getElementById("btnSimpan");
+      const toast = document.getElementById("formToast");
+      btn.disabled = true;
+      btn.innerText = "Menyimpan...";
+      toast.style.display = "none";
+
+      try {
+        const res = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "simpan",
+            divisi: currentDivisi,
+            jenis: currentJenis,
+            pin: adminPinCache,
+            items: dipilih.map(x => ({ nama: x.nama, qty: x.qty }))
+          })
+        });
+        const json = await res.json();
+        btn.disabled = false;
+        btn.innerText = "Simpan Data";
+        if (json.status === "ok") {
+          toast.style.display = "block";
+          toast.style.background = "#dcfce7";
+          toast.style.color = "#166534";
+          toast.innerText = "✅ Berhasil";
+          itemState.forEach(x => { x.checked = false; x.qty = 1; });
+          renderItems();
+        } else {
+          throw new Error(json.message || "Gagal menyimpan data");
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = "Simpan Data";
+        toast.style.display = "block";
+        toast.style.background = "#fee2e2";
+        toast.style.color = "#991b1b";
+        toast.innerText = "❌ " + err.message;
+      }
+    }
+
+    // LOAD DASHBOARD & LOG FROM GOOGLE SHEETS
+    async function loadDashboardData() {
+      const apiUrl = getApiUrl();
+      if (!apiUrl) return;
+      const tbody = document.getElementById("dashTableBody");
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#64748b;">Memuat data dari Google Sheets...</td></tr>';
+
+      try {
+        const url = apiUrl + "?action=dashboard&pin=" + encodeURIComponent(adminPinCache);
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.status !== "ok") throw new Error(json.message);
+
+        const data = json.data;
+        let aman = 0, restock = 0;
+        tbody.innerHTML = data.stok.map(r => {
+          const isRestock = String(r.status).toUpperCase().includes("RESTOCK");
+          if (isRestock) restock++; else aman++;
+          return `
+            <tr>
+              <td><strong>${r.kode}</strong></td>
+              <td>${r.nama}</td>
+              <td>${r.satuan}</td>
+              <td>${r.awal}</td>
+              <td>${r.masuk}</td>
+              <td>${r.keluar}</td>
+              <td><strong>${r.sisa}</strong></td>
+              <td><span class="badge ${isRestock ? 'badge-restock' : 'badge-aman'}">${r.status}</span></td>
+            </tr>
+          `;
+        }).join("");
+        document.getElementById("kpiTotal").innerText = data.stok.length;
+        document.getElementById("kpiAman").innerText = aman;
+        document.getElementById("kpiRestock").innerText = restock;
+
+        const lbody = document.getElementById("logTableBody");
+        lbody.innerHTML = data.logs.length ? data.logs.map(l => `
+          <tr>
+            <td>${l.waktu}</td>
+            <td><strong>${l.divisi}</strong></td>
+            <td>${l.jenis}</td>
+            <td>${l.nama}</td>
+            <td><strong>${l.qty}</strong></td>
+          </tr>
+        `).join("") : '<tr><td colspan="5" style="text-align:center;">Belum ada riwayat transaksi.</td></tr>';
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#dc2626;">Gagal memuat data: ${err.message}</td></tr>`;
+      }
+    }
+
+    initApiConfig();
+    renderItems();
+  </script>
+</body>
+</html>
